@@ -1,8 +1,8 @@
-# 🏗️ Azure Data Factory Pipeline Architecture
+# Azure Data Factory Pipeline Architecture
 
 > **Comprehensive guide to the Company Activity pipeline design and implementation**
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Architecture Diagram](#-architecture-diagram)
@@ -16,50 +16,50 @@
 
 ---
 
-## 🔍 Overview
+## Overview
 
 This document outlines the Azure Data Factory (ADF) pipeline architecture for the Company Activity analytics platform. The solution follows a **Medallion Architecture** (Bronze → Silver → Gold) with automated ingestion, transformation, and error handling.
 
 **Key Technologies:**
-- 🔷 **Azure Data Factory** - Pipeline orchestration
-- 🗄️ **Azure Data Lake Storage Gen2** - Bronze layer storage  
-- 🗃️ **Azure SQL Database** - Silver & Gold layers
-- ⚡ **Azure Functions** - API ingestion processing
+- **Azure Data Factory** - Pipeline orchestration
+- **Azure Data Lake Storage Gen2** - Bronze layer storage  
+- **Azure SQL Database** - Silver & Gold layers
+- **Azure Functions** - API ingestion processing
 
 ---
 
-## 🏗️ Architecture Diagram
+## Architecture Diagram
 
 ### Data Ingestion & Transformation Flow
 
 ```mermaid
 graph TD
     %% Data Sources
-    CRM[📊 Azure Blob CRM<br/>Daily CSV Files] 
-    API[🌐 Product Usage API<br/>REST Endpoint]
+    CRM[Azure Blob CRM<br/>Daily CSV Files] 
+    API[Product Usage API<br/>REST Endpoint]
     
     %% Ingestion Pipelines
-    CRM --> PL1[🔄 pl_ingest_crm]
-    API --> PL2[🔄 pl_ingest_product_api]
+    CRM --> PL1[pl_ingest_crm]
+    API --> PL2[pl_ingest_product_api]
     
     %% Bronze Layer
-    PL1 --> |Copy Activity| B1[🥉 Bronze Layer<br/>/bronze/crm/company_daily/]
-    PL2 --> |Azure Function| B2[🥉 Bronze Layer<br/>/bronze/product_usage/daily/]
+    PL1 --> |Copy Activity| B1[Bronze Layer<br/>/bronze/crm/company_daily/]
+    PL2 --> |Azure Function| B2[Bronze Layer<br/>/bronze/product_usage/daily/]
     
     %% Silver Transformation
-    B1 --> PL3[🔄 pl_transform_silver]
+    B1 --> PL3[pl_transform_silver]
     B2 --> PL3
-    PL3 --> |Mapping Data Flow| S1[🥈 dim_company]
-    PL3 --> |Mapping Data Flow| S2[🥈 fact_company_usage_daily]
+    PL3 --> |Mapping Data Flow| S1[dim_company]
+    PL3 --> |Mapping Data Flow| S2[fact_company_usage_daily]
     
     %% Gold Transformation  
-    S1 --> PL4[🔄 pl_transform_gold]
+    S1 --> PL4[pl_transform_gold]
     S2 --> PL4
-    PL4 --> |Stored Procedure| G1[🥇 gold_company_activity]
+    PL4 --> |Stored Procedure| G1[gold_company_activity]
     
     %% Error Handling
-    PL1 --> |On Failure| A1[📧 Alert System]
-    PL2 --> |On Failure| A2[📧 Alert System]
+    PL1 --> |On Failure| A1[Alert System]
+    PL2 --> |On Failure| A2[Alert System]
     
     %% Styling
     classDef bronze fill:#cd7f32,stroke:#8B4513,color:#fff
@@ -77,11 +77,11 @@ graph TD
 
 ---
 
-## 🔧 Pipeline Components
+## Pipeline Components
 
 ### Ingestion Pipelines
 
-#### 1️⃣ **CRM Data Ingestion**
+#### 1. **CRM Data Ingestion**
 ```yaml
 Pipeline: pl_ingest_crm_company_daily
 Trigger: Daily at 6:00 AM UTC
@@ -91,7 +91,7 @@ Activity: Copy Activity with schema validation
 Error Handling: Email alerts on failure
 ```
 
-#### 2️⃣ **Product Usage API Ingestion**  
+#### 2. **Product Usage API Ingestion**  
 ```yaml
 Pipeline: pl_ingest_product_usage_api
 Trigger: Daily at 7:00 AM UTC  
@@ -103,7 +103,7 @@ Error Handling: Retry logic + email alerts
 
 ### Transformation Pipelines
 
-#### 3️⃣ **Silver Layer Transformation**
+#### 3. **Silver Layer Transformation**
 ```yaml
 Pipeline: pl_transform_silver_company
 Dependencies: Both ingestion pipelines complete
@@ -113,7 +113,7 @@ Output Tables:
   - fact_company_usage_daily (daily grain)
 ```
 
-#### 4️⃣ **Gold Layer Analytics**
+#### 4. **Gold Layer Analytics**
 ```yaml
 Pipeline: pl_transform_gold_company_activity  
 Dependencies: Silver transformation complete
@@ -124,7 +124,7 @@ Features: Rolling metrics, churn flags, KPIs
 
 ---
 
-## 🔄 Data Flow
+## Data Flow
 
 ### Sequential Processing Steps
 
@@ -167,7 +167,7 @@ Features: Rolling metrics, churn flags, KPIs
 
 ---
 
-## 🎯 Master Pipeline Orchestration
+## Master Pipeline Orchestration
 
 ### Pipeline Execution Flow
 
@@ -216,14 +216,14 @@ graph TD
 ### Parallel vs Sequential Processing
 
 | Stage | Processing Type | Rationale |
-|-------|-----------------|----------|
-| **Ingestion** | 🔄 Parallel | Independent data sources |
-| **Silver Transform** | 🔄 Sequential | Requires both Bronze inputs |
-| **Gold Analytics** | 🔄 Sequential | Requires Silver completion |
+|-------|-----------------|-----------|
+| **Ingestion** | Parallel | Independent data sources |
+| **Silver Transform** | Sequential | Requires both Bronze inputs |
+| **Gold Analytics** | Sequential | Requires Silver completion |
 
 ---
 
-## 🏷️ Naming Conventions
+## Naming Conventions
 
 ### Standardized Naming Schema
 
@@ -232,10 +232,10 @@ graph TD
 Pattern: pl_{operation}_{layer}_{entity}
 
 Examples:
-✅ pl_ingest_crm_company_daily
-✅ pl_ingest_product_usage_api  
-✅ pl_transform_silver_company
-✅ pl_transform_gold_company_activity
+pl_ingest_crm_company_daily
+pl_ingest_product_usage_api  
+pl_transform_silver_company
+pl_transform_gold_company_activity
 ```
 
 #### Datasets  
@@ -243,11 +243,11 @@ Examples:
 Pattern: ds_{technology}_{source}_{format}
 
 Examples:
-✅ ds_blob_crm_csv
-✅ ds_rest_product_usage
-✅ ds_adls_bronze
-✅ ds_sql_silver
-✅ ds_sql_gold
+ds_blob_crm_csv
+ds_rest_product_usage
+ds_adls_bronze
+ds_sql_silver
+ds_sql_gold
 ```
 
 #### Activities
@@ -255,22 +255,22 @@ Examples:
 Pattern: act_{action}_{description}
 
 Examples:
-✅ act_copy_crm_to_bronze
-✅ act_call_product_api
-✅ act_transform_silver
-✅ act_build_gold_table
+act_copy_crm_to_bronze
+act_call_product_api
+act_transform_silver
+act_build_gold_table
 ```
 
 ### Naming Benefits
 
-- ✅ **Consistency** - Predictable patterns across all components
-- ✅ **Clarity** - Self-documenting component purposes
-- ✅ **Maintainability** - Easy identification and troubleshooting
-- ✅ **Scalability** - Framework supports additional pipelines
+- **Consistency** - Predictable patterns across all components
+- **Clarity** - Self-documenting component purposes
+- **Maintainability** - Easy identification and troubleshooting
+- **Scalability** - Framework supports additional pipelines
 
 ---
 
-## 🚨 Error Handling & Monitoring
+## Error Handling & Monitoring
 
 ### Failure Detection Strategy
 
@@ -284,11 +284,11 @@ Examples:
 ### Monitoring Dashboard
 
 **Key Metrics Tracked:**
-- 📈 Pipeline success/failure rates
-- ⏱️ Average execution times per stage
-- 📄 Data volume trends (row counts, file sizes)
-- ⚠️ Error frequency and patterns
-- 📊 SLA compliance (80-minute target)
+- Pipeline success/failure rates
+- Average execution times per stage
+- Data volume trends (row counts, file sizes)
+- Error frequency and patterns
+- SLA compliance (80-minute target)
 
 ### Alert Escalation
 
