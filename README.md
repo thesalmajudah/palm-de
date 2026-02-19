@@ -1,8 +1,8 @@
-# 📊 Company Activity Pipeline & Data Model
+# Company Activity Pipeline & Data Model
 
 A scalable data pipeline and analytics model for monitoring company engagement and detecting churn risk using Azure cloud services.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Architecture](#architecture)
@@ -10,7 +10,7 @@ A scalable data pipeline and analytics model for monitoring company engagement a
 - [Project Structure](#project-structure)
 - [Design Principles](#design-principles)
 
-## 🔍 Overview
+## Overview
 
 This repository contains a production-ready data model and pipeline design for a "Company Activity" dashboard built using modern Azure cloud services:
 
@@ -20,12 +20,12 @@ This repository contains a production-ready data model and pipeline design for a
 
 The pipeline combines CRM company data with daily product usage data into an analytics-ready model that supports trend monitoring and churn detection.
 
-## 🏗 Architecture
+## Architecture
 
 The pipeline follows a **Medallion Architecture** for data quality and governance:
 
 ```
-🥉 Bronze Layer          🥈 Silver Layer              🥇 Gold Layer
+Bronze Layer          Silver Layer              Gold Layer
 ┌─────────────┐         ┌──────────────────┐        ┌─────────────────────┐
 │ Raw CRM CSV │────────▶│ dim_company      │──────▶│                     │
 └─────────────┘         └──────────────────┘        │  fact_company_      │
@@ -35,18 +35,18 @@ The pipeline follows a **Medallion Architecture** for data quality and governanc
   Immutable              Cleaned & Typed              Dashboard Ready
 ```
 
-### 🎯 Data Model Design
+### Data Model Design
 
 **Proposed Grain**: One row per company per day
 
 **Why This Grain?**
-- ✅ CRM data is company-level (slowly changing attributes)
-- ✅ Product API provides daily usage metrics  
-- ✅ Dashboard monitors company engagement over time
-- ✅ Enables trend analysis, rolling metrics, churn detection
-- ✅ Balances flexibility with performance for BI and ML use cases
+- CRM data is company-level (slowly changing attributes)
+- Product API provides daily usage metrics  
+- Dashboard monitors company engagement over time
+- Enables trend analysis, rolling metrics, churn detection
+- Balances flexibility with performance for BI and ML use cases
 
-### 📋 Target Table Schema
+### Target Table Schema
 
 **`fact_company_activity_daily`** - Final Gold-layer table for analytics
 
@@ -64,12 +64,12 @@ The pipeline follows a **Medallion Architecture** for data quality and governanc
 | `events_7d` | INT | Rolling 7-day sum of events |
 | `is_churn_risk` | BOOLEAN | Derived churn risk flag |
 
-## 📈 Business Logic
+## Business Logic
 
 ### Rolling 7-Day Metrics
-- ✅ Calculated using SQL window functions
-- ✅ Smooths daily volatility for better trend analysis  
-- ✅ Enables engagement monitoring across time periods
+- Calculated using SQL window functions
+- Smooths daily volatility for better trend analysis  
+- Enables engagement monitoring across time periods
 
 ### Churn Risk Definition
 
@@ -82,7 +82,7 @@ AND last_contact_at < CURRENT_DATE - INTERVAL 30 DAYS
 
 **Logic**: Combines behavioral signals (no product usage) with CRM signals (no recent engagement)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 palmde/
@@ -100,7 +100,7 @@ palmde/
     └── ingest-product-usage-api.py        # API ingestion script
 ```
 
-## 🚦 Design Principles
+## Design Principles
 
 - **Clear Separation** - Distinct layers for ingestion and transformation
 - **Idempotent Processing** - Safe pipeline re-runs with consistent results
