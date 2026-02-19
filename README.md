@@ -5,9 +5,8 @@ A scalable data pipeline and analytics model for monitoring company engagement a
 ## 📋 Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)  
 - [Architecture](#architecture)
-- [Data Model](#data-model)
+- [Business Logic](#business-logic)
 - [Project Structure](#project-structure)
 - [Design Principles](#design-principles)
 

@@ -4,15 +4,12 @@
 
 ## Table of Contents
 
-- [Overview](#-overview)
-- [Architecture Diagram](#-architecture-diagram)
-- [Pipeline Components](#-pipeline-components)
-  - [Ingestion Pipelines](#ingestion-pipelines)
-  - [Transformation Pipelines](#transformation-pipelines)
-- [Data Flow](#-data-flow)
-- [Master Pipeline Orchestration](#-master-pipeline-orchestration)
-- [Naming Conventions](#-naming-conventions)
-- [Error Handling & Monitoring](#-error-handling--monitoring)
+- [Overview](#overview)
+- [Architecture Diagram](#architecture-diagram)
+- [Data Flow](#data-flow)
+- [Master Pipeline Orchestration](#master-pipeline-orchestration)
+- [Naming Conventions](#naming-conventions)
+- [Error Handling & Monitoring](#error-handling--monitoring)
 
 ---
 
@@ -74,55 +71,6 @@ graph TD
     class PL1,PL2,PL3,PL4 pipeline
     class CRM,API source
 ```
-
----
-
-## Pipeline Components
-
-### Ingestion Pipelines
-
-#### 1. **CRM Data Ingestion**
-```yaml
-Pipeline: pl_ingest_crm_company_daily
-Trigger: Daily at 6:00 AM UTC
-Source: Azure Blob Storage (CSV files)
-Destination: ADLS Gen2 Bronze Layer
-Activity: Copy Activity with schema validation
-Error Handling: Email alerts on failure
-```
-
-#### 2. **Product Usage API Ingestion**  
-```yaml
-Pipeline: pl_ingest_product_usage_api
-Trigger: Daily at 7:00 AM UTC  
-Source: Product Usage REST API
-Destination: ADLS Gen2 Bronze Layer
-Activity: Web Activity → Azure Function → ADLS
-Error Handling: Retry logic + email alerts
-```
-
-### Transformation Pipelines
-
-#### 3. **Silver Layer Transformation**
-```yaml
-Pipeline: pl_transform_silver_company
-Dependencies: Both ingestion pipelines complete
-Processing: Mapping Data Flow + SQL transformations
-Output Tables:
-  - dim_company (SCD Type 1)
-  - fact_company_usage_daily (daily grain)
-```
-
-#### 4. **Gold Layer Analytics**
-```yaml
-Pipeline: pl_transform_gold_company_activity  
-Dependencies: Silver transformation complete
-Processing: Stored procedure with business logic
-Output Table: gold_company_activity (dashboard-ready)
-Features: Rolling metrics, churn flags, KPIs
-```
-
----
 
 ## Data Flow
 
@@ -187,41 +135,6 @@ Execution Steps:
   5. Execute pl_transform_gold_company_activity
 ```
 
-### Dependency Management
-
-```mermaid
-graph TD
-    M[pl_master] --> I1[pl_ingest_crm]
-    M --> I2[pl_ingest_product_api]
-    I1 --> |Success| W[Wait Activity]
-    I2 --> |Success| W
-    W --> S[pl_transform_silver]
-    S --> |Success| G[pl_transform_gold]
-    
-    %% Error Paths
-    I1 --> |Failure| F1[Pipeline Failure]
-    I2 --> |Failure| F2[Pipeline Failure]
-    S --> |Failure| F3[Pipeline Failure]
-    G --> |Failure| F4[Pipeline Failure]
-    
-    classDef success fill:#28A745,stroke:#1E7E34,color:#fff
-    classDef failure fill:#DC3545,stroke:#C82333,color:#fff
-    classDef master fill:#6F42C1,stroke:#59359A,color:#fff
-    
-    class I1,I2,S,G success
-    class F1,F2,F3,F4 failure
-    class M master
-```
-
-### Parallel vs Sequential Processing
-
-| Stage | Processing Type | Rationale |
-|-------|-----------------|-----------|
-| **Ingestion** | Parallel | Independent data sources |
-| **Silver Transform** | Sequential | Requires both Bronze inputs |
-| **Gold Analytics** | Sequential | Requires Silver completion |
-
----
 
 ## Naming Conventions
 
