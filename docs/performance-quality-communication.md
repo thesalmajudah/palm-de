@@ -85,8 +85,7 @@ SUM(COALESCE(events, 0)) AS events
 We'll apply a temporary performance fix by clustering/partitioning `fact_events` on `(company_id, date)` to speed up daily aggregation.
 
 **Important Notes:**
-- **Caveat:** The new pre-aggregated totals may not include late-arriving events until the next run
-- **Analysts should expect:** Small discrepancies vs. raw API for a day or two; please flag any anomalies
-- **Next steps:** Full deduplication and rolling backfill planned for next sprint – we'll communicate when complete
+- The new pre-aggregated totals may not include late-arriving events until the next run.  **Analysts should expect:** Small discrepancies vs. raw API for a day or two; please flag any anomalies.
+- **Next steps:** Full deduplication and rolling backfill planned for next sprint, we'll communicate when complete
 
 **Contact:** Data Engineering team for questions or issues
