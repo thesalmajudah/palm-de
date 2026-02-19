@@ -32,31 +32,31 @@ This document outlines the Azure Data Factory (ADF) pipeline architecture for th
 ```mermaid
 graph TD
     %% Data Sources
-    CRM[Azure Blob CRM<br/>Daily CSV Files] 
-    API[Product Usage API<br/>REST Endpoint]
+    A[Azure Blob CRM<br/>Daily CSV Files] 
+    B[Product Usage API<br/>REST Endpoint]
     
     %% Ingestion Pipelines
-    CRM --> PL1[pl_ingest_crm]
-    API --> PL2[pl_ingest_product_api]
+    A --> C[pl_ingest_crm]
+    B --> D[pl_ingest_product_api]
     
     %% Bronze Layer
-    PL1 --> |Copy Activity| B1[Bronze Layer<br/>/bronze/crm/company_daily/]
-    PL2 --> |Azure Function| B2[Bronze Layer<br/>/bronze/product_usage/daily/]
+    C --> |Copy Activity| E[Bronze Layer<br/>/bronze/crm/company_daily/]
+    D --> |Azure Function| F[Bronze Layer<br/>/bronze/product_usage/daily/]
     
     %% Silver Transformation
-    B1 --> PL3[pl_transform_silver]
-    B2 --> PL3
-    PL3 --> |Mapping Data Flow| S1[dim_company]
-    PL3 --> |Mapping Data Flow| S2[fact_company_usage_daily]
+    E --> G[pl_transform_silver]
+    F --> G
+    G --> |Mapping Data Flow| H[dim_company]
+    G --> |Mapping Data Flow| I[fact_company_usage_daily]
     
-    %% Gold Transformation  
-    S1 --> PL4[pl_transform_gold]
-    S2 --> PL4
-    PL4 --> |Stored Procedure| G1[gold_company_activity]
+    %% Gold Transformation
+    H --> J[pl_transform_gold]
+    I --> J
+    J --> |Stored Procedure| K[gold_company_activity]
     
     %% Error Handling
-    PL1 --> |On Failure| A1[Alert System]
-    PL2 --> |On Failure| A2[Alert System]
+    C --> |On Failure| L[Alert System]
+    D --> |On Failure| M[Alert System]
     
     %% Styling
     classDef bronze fill:#cd7f32,stroke:#8B4513,color:#fff
@@ -64,12 +64,14 @@ graph TD
     classDef gold fill:#FFD700,stroke:#DAA520,color:#000
     classDef pipeline fill:#0078D4,stroke:#005599,color:#fff
     classDef source fill:#28A745,stroke:#1E7E34,color:#fff
+    classDef alert fill:#DC3545,stroke:#C82333,color:#fff
     
-    class B1,B2 bronze
-    class S1,S2 silver
-    class G1 gold
-    class PL1,PL2,PL3,PL4 pipeline
-    class CRM,API source
+    class E,F bronze
+    class H,I silver
+    class K gold
+    class C,D,G,J pipeline
+    class A,B source
+    class L,M alert
 ```
 
 ## Data Flow
