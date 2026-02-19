@@ -50,15 +50,15 @@ flowchart TD
     
     A --> C
     B --> D
-    C --> E
-    D --> F
+    C -->|Copy Activity| E
+    D -->|Azure Function| F
     E --> G
     F --> G
-    G --> H
-    G --> I
+    G -->|Mapping Data Flow| H
+    G -->|Mapping Data Flow| I
     H --> J
     I --> J
-    J --> K
+    J -->|Stored Procedure| K
     
     style E fill:#cd7f32
     style F fill:#cd7f32
