@@ -63,13 +63,13 @@ graph TD
     
     %% Styling
     classDef bronze fill:#cd7f32,stroke:#8B4513,color:#fff
-    classDef silver fill:#C0C0C0,stroke:#808080,color:#000  
+    classDef silver fill:#C0C0C0,stroke:#808080,color:#000
     classDef gold fill:#FFD700,stroke:#DAA520,color:#000
     classDef pipeline fill:#0078D4,stroke:#005599,color:#fff
     classDef source fill:#28A745,stroke:#1E7E34,color:#fff
     
     class B1,B2 bronze
-    class S1,S2 silver  
+    class S1,S2 silver
     class G1 gold
     class PL1,PL2,PL3,PL4 pipeline
     class CRM,API source
@@ -200,7 +200,7 @@ graph TD
     
     %% Error Paths
     I1 --> |Failure| F1[Pipeline Failure]
-    I2 --> |Failure| F2[Pipeline Failure] 
+    I2 --> |Failure| F2[Pipeline Failure]
     S --> |Failure| F3[Pipeline Failure]
     G --> |Failure| F4[Pipeline Failure]
     
@@ -209,7 +209,7 @@ graph TD
     classDef master fill:#6F42C1,stroke:#59359A,color:#fff
     
     class I1,I2,S,G success
-    class F1,F2,F3,F4 failure  
+    class F1,F2,F3,F4 failure
     class M master
 ```
 
