@@ -30,48 +30,45 @@ This document outlines the Azure Data Factory (ADF) pipeline architecture for th
 ### Data Ingestion & Transformation Flow
 
 ```mermaid
-graph TD
-    %% Data Sources
-    A[Azure Blob CRM<br/>Daily CSV Files] 
-    B[Product Usage API<br/>REST Endpoint]
+flowchart TD
+    A["Azure Blob CRM<br/>Daily CSV Files"] 
+    B["Product Usage API<br/>REST Endpoint"]
     
-    %% Ingestion Pipelines
-    A --> C[pl_ingest_crm]
-    B --> D[pl_ingest_product_api]
+    C["pl_ingest_crm"]
+    D["pl_ingest_product_api"]
     
-    %% Bronze Layer
-    C --> |Copy Activity| E[Bronze Layer<br/>/bronze/crm/company_daily/]
-    D --> |Azure Function| F[Bronze Layer<br/>/bronze/product_usage/daily/]
+    E["Bronze Layer<br/>/bronze/crm/company_daily/"]
+    F["Bronze Layer<br/>/bronze/product_usage/daily/"]
     
-    %% Silver Transformation
-    E --> G[pl_transform_silver]
+    G["pl_transform_silver"]
+    
+    H["dim_company"]
+    I["fact_company_usage_daily"]
+    
+    J["pl_transform_gold"]
+    K["gold_company_activity"]
+    
+    A --> C
+    B --> D
+    C --> E
+    D --> F
+    E --> G
     F --> G
-    G --> |Mapping Data Flow| H[dim_company]
-    G --> |Mapping Data Flow| I[fact_company_usage_daily]
-    
-    %% Gold Transformation
-    H --> J[pl_transform_gold]
+    G --> H
+    G --> I
+    H --> J
     I --> J
-    J --> |Stored Procedure| K[gold_company_activity]
+    J --> K
     
-    %% Error Handling
-    C --> |On Failure| L[Alert System]
-    D --> |On Failure| M[Alert System]
-    
-    %% Styling
-    classDef bronze fill:#cd7f32,stroke:#8B4513,color:#fff
-    classDef silver fill:#C0C0C0,stroke:#808080,color:#000
-    classDef gold fill:#FFD700,stroke:#DAA520,color:#000
-    classDef pipeline fill:#0078D4,stroke:#005599,color:#fff
-    classDef source fill:#28A745,stroke:#1E7E34,color:#fff
-    classDef alert fill:#DC3545,stroke:#C82333,color:#fff
-    
-    class E,F bronze
-    class H,I silver
-    class K gold
-    class C,D,G,J pipeline
-    class A,B source
-    class L,M alert
+    style E fill:#cd7f32
+    style F fill:#cd7f32
+    style H fill:#C0C0C0
+    style I fill:#C0C0C0
+    style K fill:#FFD700
+    style C fill:#0078D4
+    style D fill:#0078D4
+    style G fill:#0078D4
+    style J fill:#0078D4
 ```
 
 ## Data Flow
